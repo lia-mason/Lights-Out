@@ -11,6 +11,13 @@ public class Jump : MonoBehaviour
     float jumpVelocity = 12f;
     public bool gravitySwitch = true;
 
+    private bool isGrounded = true;
+    private bool onCeiling = true;
+    public Transform groundCheck;
+    public float checkRadius;
+    public LayerMask platforms;
+    public LayerMask ceiling;
+
     // Start is called before the first frame update
     private void Awake()
     {
@@ -19,26 +26,28 @@ public class Jump : MonoBehaviour
     }
 
     // Update is called once per frame
+    void FixedUpdate()
+    {
+        //rigidbody2d.velocity = new Vector2(speed * 1, rigidbody2d.velocity.y);
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, platforms);
+        onCeiling = Physics2D.OverlapCircle(groundCheck.position, checkRadius, ceiling);
+    }
+
     private void Update()
     {
-        if (IsGrounded() && Input.GetKey(KeyCode.UpArrow))
+
+        if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)
         {
             rigidbody2d.velocity = Vector2.up * jumpVelocity;
         }
 
-        if (IsGrounded() && Input.GetKey(KeyCode.DownArrow))
+        if (Input.GetKeyDown(KeyCode.UpArrow) && onCeiling)
         {
             rigidbody2d.velocity = Vector2.down * jumpVelocity;
         }
 
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            transform.position += transform.right * speed * Time.deltaTime;
-        }
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            transform.position += transform.right * -speed * Time.deltaTime;
-        }
+
+
         if (Input.GetKeyDown(KeyCode.Space))
 
         {
@@ -46,24 +55,21 @@ public class Jump : MonoBehaviour
             if (gravitySwitch)
             {
                 Physics2D.gravity = new Vector3(0, 9.81f, 0);
-                transform.localRotation = Quaternion.Euler(180, 0, 0); 
+                transform.localRotation = Quaternion.Euler(180, 0, 0);
+
 
             }
-            else if (!(gravitySwitch)) 
+            else if (!(gravitySwitch))
             {
                 Physics2D.gravity = new Vector3(0, -9.81f, 0);
                 transform.localRotation = Quaternion.Euler(0, 0, 0);
-
             }
 
         }
+        
+
     }
 
-    private bool IsGrounded()
-    {
-        RaycastHit2D raycastHit2D = Physics2D.BoxCast(boxCollider2d.bounds.center, boxCollider2d.bounds.size, 0f, Vector2.down * .1f, platformMask);
-        Debug.Log(raycastHit2D.collider);
-        return raycastHit2D.collider != null; 
-    }
+    
 
 }
