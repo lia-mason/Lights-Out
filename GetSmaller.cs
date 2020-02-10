@@ -10,9 +10,7 @@ public class GetSmaller : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("Small script running!");
         small = false;
-
     }
 
     // Update is called once per frame
